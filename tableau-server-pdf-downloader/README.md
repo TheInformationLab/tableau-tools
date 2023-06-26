@@ -6,6 +6,16 @@ While the newer version of tabcmd can download all views in a workbook as a PDF,
 
 This script aims to offer a replacement for that missing functionality until Tableau developers build the option into the REST API.
 
+## Usage
+
+The script requires a number of input variables, which can be provided interactively at runtime, or in a JSON file, as described below. To choose between these two options, specify one of the following arguments when running the script:
+
+Use the argument '-f (filename)' to provide a JSON file as input
+If using a file, see the config-example.json file for an example of the required format.
+
+Use the argument '-q' to be prompted with questions.
+If running interactively, you will be prompted at the command line to input all the variables.
+
 ## Authentication
 
 The script accepts authentication with both username/password or personal access token. Specify either 'password', or 'token' as your auth_method in the prompts or configuration file, including the relevant values as described below.
@@ -16,16 +26,6 @@ Ensure you are using Python 3.7 or later. Run the script with
 
 python /path/to/tableau_fullpdf_downloader.py -f /path/to/config.json, or
 python /path/to/tableau_fullpdf_downloader.py -q
-
-## Usage
-
-The script requires a number of input variables, which can be provided interactively at runtime, or in a JSON file, as described below. To choose between these two options, specify one of the following arguments when running the script:
-
-Use the argument '-f (filename)' to provide a JSON file as input
-If using a file, see the config-example.json file for an example of the required format.
-
-Use the argument '-q' to be prompted with questions.
-If running interactively, you will be prompted at the command line to input all the variables.
 
 ## Example configuration files
 
