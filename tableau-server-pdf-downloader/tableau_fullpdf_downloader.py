@@ -40,15 +40,15 @@ def prompt_user():
     # Ask user for PDF orientation
     data["pdf_orientation"] = input(
         "Please enter the PDF orientation ('portrait' or 'landscape'): ")
-    # Ask user for output path
-    data["output_path"] = input("Please enter the output path: ")
-    # Ask user for output filename
-    data["output_filename"] = input("Please enter the output filename: ")
     # Ask user for filter field
     data["filter_field"] = input(
         "Please enter the field name to apply the filter on: ")
     # Ask user for filter value
     data["filter_value"] = input("Please enter the filter value: ")
+    # Ask user for output filename
+    data["output_filename"] = input("Please enter the output filename: ")
+    # Ask user for output path
+    data["output_path"] = input("Please enter the output path: ")
     return data
 
 # Function to parse a JSON file
