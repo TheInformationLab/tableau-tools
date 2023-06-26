@@ -1,0 +1,11 @@
+{
+  "server_url": "https://your-tableau-server-url",
+  "username": "your-username",
+  "password": "your-password",
+  "site_name": "your-site-name",
+  "project_name": "your-project-name",
+  "workbook_name": "your-workbook-name",
+  "pdf_orientation": "portrait",
+  "output_filename": "your-output-filename.pdf",
+  "output_path": "/your/output/path"
+}
