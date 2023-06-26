@@ -1,7 +1,8 @@
 {
   "server_url": "https://your-tableau-server-url",
-  "username": "your-username",
-  "password": "your-password",
+  "auth_method": "token",
+  "token_name": "token_name",
+  "token_value": "token_value",
   "site_name": "your-site-name",
   "project_name": "your-project-name",
   "workbook_name": "your-workbook-name",
