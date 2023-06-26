@@ -31,34 +31,34 @@ If running interactively, you will be prompted at the command line to input all 
 
 Using PAT authentication:
 
-`{
-  "server_url": "https://your-tableau-server-url",
-  "auth_method": "token",
-  "token_name": "token_name",
-  "token_value": "token_value",
-  "site_name": "your-site-name",
-  "project_name": "your-project-name",
-  "workbook_name": "your-workbook-name",
-  "pdf_orientation": "portrait",
-  "output_filename": "your-output-filename.pdf",
-  "output_path": "/your/output/path",
-  "filter_field": "field-name",
-  "filter_value": "field-value"
-}`
+    {
+    "server_url": "https://your-tableau-server-url",
+    "auth_method": "token",
+    "token_name": "token_name",
+    "token_value": "token_value",
+    "site_name": "your-site-name",
+    "project_name": "your-project-name",
+    "workbook_name": "your-workbook-name",
+    "pdf_orientation": "portrait",
+    "output_filename": "your-output-filename.pdf",
+    "output_path": "/your/output/path",
+    "filter_field": "field-name",
+    "filter_value": "field-value"
+    }
 
 Using username/password authentication:
 
-`{
-  "server_url": "https://your-tableau-server-url",
-  "auth_method": "password",
-  "username": "myusername",
-  "password": "mypassword",
-  "site_name": "your-site-name",
-  "project_name": "your-project-name",
-  "workbook_name": "your-workbook-name",
-  "pdf_orientation": "portrait",
-  "output_filename": "your-output-filename.pdf",
-  "output_path": "/your/output/path",
-  "filter_field": "field-name",
-  "filter_value": "field-value"
-}`
+    {
+    "server_url": "https://your-tableau-server-url",
+    "auth_method": "password",
+    "username": "myusername",
+    "password": "mypassword",
+    "site_name": "your-site-name",
+    "project_name": "your-project-name",
+    "workbook_name": "your-workbook-name",
+    "pdf_orientation": "portrait",
+    "output_filename": "your-output-filename.pdf",
+    "output_path": "/your/output/path",
+    "filter_field": "field-name",
+    "filter_value": "field-value"
+    }
