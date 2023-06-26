@@ -28,7 +28,7 @@ If using a configuration file, run the script with:
 
     python /path/to/tableau_fullpdf_downloader.py -f /path/to/config.json, or
 
-If you are not using a configuraiton file and want to be prompted for input, run the script with:
+If you are not using a configuration file and want to be prompted for input, run the script with:
 
     python /path/to/tableau_fullpdf_downloader.py -q
 
