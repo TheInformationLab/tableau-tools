@@ -7,5 +7,7 @@
   "workbook_name": "your-workbook-name",
   "pdf_orientation": "portrait",
   "output_filename": "your-output-filename.pdf",
-  "output_path": "/your/output/path"
+  "output_path": "/your/output/path",
+  "filter_field": "field-name",
+  "filter_value": "field-value"
 }
