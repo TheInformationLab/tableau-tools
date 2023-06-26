@@ -22,10 +22,15 @@ The script accepts authentication with both username/password or personal access
 
 ## How to run
 
-Ensure you are using Python 3.7 or later. Run the script with
+Ensure you are using Python 3.7 or later.
 
-python /path/to/tableau_fullpdf_downloader.py -f /path/to/config.json, or
-python /path/to/tableau_fullpdf_downloader.py -q
+If using a configuration file, run the script with:
+
+    python /path/to/tableau_fullpdf_downloader.py -f /path/to/config.json, or
+
+If you are not using a configuraiton file and want to be prompted for input, run the script with:
+
+    python /path/to/tableau_fullpdf_downloader.py -q
 
 ## Example configuration files
 
