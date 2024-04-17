@@ -1,18 +1,35 @@
-<script type="text/javascript">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau URL Redirector</title>
+</head>
+<body>
+    <script type="text/javascript">
+    // This script is used for redirecting from old Tableau Server URLs to new Tableau Cloud URLs.
+    // Users need to update the BASE_URL and SITE_PATH below according to their own Tableau Cloud environment.
+
     window.onload = function() {
-        // Extract the path after '#'
+        // Extract the path after the '#' from the original URL
         var oldPath = window.location.hash;
-    
+
         // Remove the leading '#' from oldPath if it exists
         if (oldPath.startsWith('#')) {
             oldPath = oldPath.slice(1);
         }
-    
-        // Construct the new URL
-        var newPath = "https://10ax.online.tableau.com/#/site/jmacdev793245" + oldPath;
-    
+
+        // Define the base URL of your new Tableau Cloud instance. Note you must include the pod reference, e.g. 10ax, or eu-west-2 etc. Update this variable!
+        var BASE_URL = "https://10ax.online.tableau.com";
+
+        // Define the site path segment of your Tableau Cloud URL. Update this variable!
+        var SITE_PATH = "/#/site/YOUR_SITE_PATH_HERE";
+
+        // Construct the new URL with the old fragment
+        var newPath = BASE_URL + SITE_PATH + "/#" + oldPath;
+
         // Redirect to the new URL
         window.location.href = newPath;
     };
     </script>
-    
+</body>
+</html>
