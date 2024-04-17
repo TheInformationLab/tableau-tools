@@ -1,0 +1,18 @@
+<script type="text/javascript">
+    window.onload = function() {
+        // Extract the path after '#'
+        var oldPath = window.location.hash;
+    
+        // Remove the leading '#' from oldPath if it exists
+        if (oldPath.startsWith('#')) {
+            oldPath = oldPath.slice(1);
+        }
+    
+        // Construct the new URL
+        var newPath = "https://10ax.online.tableau.com/#/site/jmacdev793245" + oldPath;
+    
+        // Redirect to the new URL
+        window.location.href = newPath;
+    };
+    </script>
+    
