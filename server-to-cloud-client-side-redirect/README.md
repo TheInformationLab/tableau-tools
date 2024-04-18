@@ -29,6 +29,10 @@ Given these limitations, a client-side JavaScript approach is necessary:
 
 The script provided intercepts the page load, extracts the URL fragment, and constructs a new URL appropriate for the Tableau Cloud environment. This redirection happens seamlessly, enhancing the user experience during the transition period.
 
+## Limitations
+
+This **only** redirects dashboard view links, it does not redirect links to other content items or parts of the server UI, for example datasources, projects or workbooks. This is due to a unique content ID being included in these type of links which will not map to the same content on your Cloud instance.
+
 ## Usage
 
 To implement this solution:
