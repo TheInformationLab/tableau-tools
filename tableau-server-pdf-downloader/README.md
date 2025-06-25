@@ -2,7 +2,9 @@
 
 This Python scripts emulates the download 'fullpdf' functionality that is available in the original version of tabcmd.
 
-While the newer version of tabcmd can download all views in a workbook as a PDF, it is currently unable to apply a filter to all views.
+~~While the newer version of tabcmd can download all views in a workbook as a PDF, it is currently unable to apply a filter to all views.~~
+
+Update: tabcmd 2.0 now supports this functionality, as of version 2.0.17, more info here: https://github.com/tableau/tabcmd/issues/233
 
 This script aims to offer a replacement for that missing functionality until Tableau developers build the option into the REST API.
 
