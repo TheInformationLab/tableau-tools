@@ -19,10 +19,11 @@ class VizportalAuth:
     4. (Optionally) create a PAT
     """
     def __init__(self, server_url, verify_ssl=True):
-        # Normalize base URL (remove trailing slash) and create a requests.Session
+        # Normalize base URL and create a requests session
         self.server_url = server_url.rstrip('/')
         self.session = requests.Session()
         self.verify_ssl = verify_ssl
+        # Storage for RSA key components
         self.key_id = None
         self.n = None
         self.e = None
@@ -30,21 +31,21 @@ class VizportalAuth:
     def _headers(self, xsrf_token=None):
         """
         Build the common headers for Vizportal JSON calls.
-        If an XSRF token is provided, include it.
+        Include X-XSRF-TOKEN header if provided.
         """
-        h = {
+        headers = {
             'Content-Type': 'application/json;charset=UTF-8',
             'Accept': 'application/json, text/plain, */*',
             'Cache-Control': 'no-cache',
         }
         if xsrf_token:
-            h['X-XSRF-TOKEN'] = xsrf_token
-        return h
+            headers['X-XSRF-TOKEN'] = xsrf_token
+        return headers
 
     def generate_public_key(self):
         """
-        Step 1: POST to /generatePublicKey to retrieve the RSA modulus & exponent.
-        Stores keyId, n (modulus) and e (exponent) for later encryption.
+        Retrieve the RSA public key from Vizportal.
+        Stores keyId, modulus (n) and exponent (e).
         """
         url = f"{self.server_url}/vizportal/api/web/v1/generatePublicKey"
         payload = {"method": "generatePublicKey", "params": {}}
@@ -58,35 +59,48 @@ class VizportalAuth:
 
         result = resp.json()["result"]
         self.key_id = result["keyId"]
+        # key could be returned as hex string or integer
         self.n = result["key"]["n"]
         self.e = result["key"]["e"]
         return self.key_id, self.n, self.e
 
     def encrypt_password(self, plaintext_password):
         """
-        Step 2: Encrypt the plaintext password using the fetched RSA public key.
-        Returns the hex-encoded cipher text required by Vizportal.
+        Encrypt the plaintext password using the fetched RSA public key.
+        Handles cases where n/e are hex strings, ints, or missing.
+        Returns the hex-encoded cipher text.
         """
-        # Convert hex strings to integers
-        modulus = int(self.n, 16)
-        exponent = int(self.e, 16)
+        # Ensure public key is available
+        if self.n is None or self.e is None:
+            raise RuntimeError("Public key not initialized. Call generate_public_key() first.")
+
+        # Parse modulus and exponent if needed
+        if isinstance(self.n, str):
+            modulus = int(self.n, 16)
+        else:
+            modulus = int(self.n)
+
+        if isinstance(self.e, str):
+            exponent = int(self.e, 16)
+        else:
+            exponent = int(self.e)
+
+        # Construct RSA key and encrypt
         pubkey = RSA.construct((modulus, exponent))
         cipher = PKCS1_v1_5.new(pubkey)
-
-        # Encrypt and hex-encode
         encrypted_bytes = cipher.encrypt(plaintext_password.encode('utf-8'))
         return binascii.b2a_hex(encrypted_bytes).decode('ascii')
 
     def login(self, username, plaintext_password):
         """
-        Step 3: Perform the login dance:
-        - Ensure we have a public key (generate if needed)
-        - Encrypt the password
-        - POST credentials to /login
-        - Extract workgroup_session_id & XSRF-TOKEN from cookies
-        Returns (workgroup_session_id, XSRF-TOKEN)
+        Perform the login sequence:
+        1) Fetch or refresh public key
+        2) Encrypt password
+        3) POST to /login
+        4) Extract workgroup_session_id & XSRF-TOKEN
         """
-        if not hasattr(self, 'key_id'):
+        # Always regenerate key if missing or incomplete
+        if self.key_id is None or self.n is None or self.e is None:
             self.generate_public_key()
 
         encrypted_hex = self.encrypt_password(plaintext_password)
@@ -107,7 +121,7 @@ class VizportalAuth:
         )
         resp.raise_for_status()
 
-        # These cookies are set HttpOnly; requests.Session will capture them
+        # Cookies are set HttpOnly; retrieve from session
         wg = self.session.cookies.get("workgroup_session_id")
         xsrf = self.session.cookies.get("XSRF-TOKEN")
         if not wg or not xsrf:
@@ -117,9 +131,8 @@ class VizportalAuth:
 
     def create_personal_access_token(self, client_id):
         """
-        Step 4: Create a Personal Access Token (PAT) named client_id.
-        Requires a prior successful login (to supply XSRF-TOKEN).
-        Returns the refreshToken string.
+        Create a PAT named client_id. Returns the refreshToken.
+        Requires that login() has already been called.
         """
         xsrf = self.session.cookies.get("XSRF-TOKEN")
         if not xsrf:
@@ -145,12 +158,11 @@ class VizportalAuth:
 
         return token
 
+
 def main():
     """
-    Command-line entrypoint:
-    - Parse arguments
-    - Login and print session tokens
-    - Optionally create a PAT and print it
+    Entry point for CLI usage.
+    Parse arguments, authenticate, print tokens, and optionally create a PAT.
     """
     parser = argparse.ArgumentParser(
         description="Authenticate to Tableau Vizportal and (optionally) create a PAT"
@@ -169,7 +181,7 @@ def main():
     )
     args = parser.parse_args()
 
-    # Initialize and login
+    # Initialize auth helper and log in
     auth = VizportalAuth(args.server, verify_ssl=not args.no_verify)
     wg_id, xsrf = auth.login(args.username, args.password)
     print("workgroup_session_id:", wg_id)
