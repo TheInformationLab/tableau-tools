@@ -50,12 +50,12 @@ python workbook_archiver.py <server> <pat_name> <pat_secret> <output_directory> 
 ### Example
 
 ```bash
-python workbook_archiver.py https://tableau.example.com my-token-name my-secret "C:\Archive"
+python workbook_archiver.py https://tableau.example.com/ my-token-name my-secret "C:\Archive"
 ```
 ### Example with --initial-site
 
 ```bash
-python workbook_archiver.py https://tableau.example.com token-name token-secret "C:\Archive" --initial-site marketing
+python workbook_archiver.py https://10ax.online.tableau.com/ token-name token-secret "C:\Archive" --initial-site marketing
 
 ```
 

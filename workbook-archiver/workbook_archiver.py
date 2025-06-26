@@ -136,6 +136,10 @@ def main():
                         help="If provided, uri of the site to use during site querying")
 
     args = parser.parse_args()
+    
+    # check if the server address provided includes a trailing slash
+    if not args.server.endswith("/"):
+        args.server += "/"
 
     is_cloud = ".online.tableau.com" in args.server.lower()
 
