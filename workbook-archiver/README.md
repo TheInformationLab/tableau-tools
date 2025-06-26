@@ -72,16 +72,16 @@ The output directory will be structured by site, and then by the **full nested p
 <output_directory>/
 ├── SiteOne/
 │   └── Department/
-        └── Finance/
-            └── Quarterly Reports/
-                ├── Workbook A.twbx
-                └── Workbook B.twbx
+│       └── Finance/
+│            └── Quarterly Reports/
+│               ├── Workbook A.twbx
+│               └── Workbook B.twbx
 ├── SiteTwo/
 │   └── Department/
-        └── Finance/
-            └── Quarterly Reports/
-                ├── Workbook A.twbx
-                └── Workbook B.twbx
+│       └── Finance/
+│            └── Quarterly Reports/
+│               ├── Workbook A.twbx
+│               └── Workbook B.twbx
 ```
 
 > Note: Project and workbook names are sanitized to remove illegal filesystem characters.
