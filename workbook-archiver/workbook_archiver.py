@@ -165,7 +165,7 @@ def download_workbooks(ctx: WorkbookContext,
 
         # Download the workbook
         with ctx.server.auth.sign_in(ctx.tableau_auth):
-            ctx.server.workbooks.download(workbook_id,filepath=filepath,no_extract=ctx.no_extracts)
+            ctx.server.workbooks.download(workbook_id,filepath=filepath,include_extract=ctx.no_extracts)
 
 ### ~~~ MAIN ENTRY POINT ~~~ ###
 
@@ -232,7 +232,7 @@ def main():
             site_name=site_name,
             output=args.output,
             project_paths=project_paths,
-            no_extracts=args.no_extracts
+            no_extracts=not args.no_extracts
         )
         download_workbooks(ctx, workbooks)
     else:
@@ -267,7 +267,7 @@ def main():
                 site_name=site_name,
                 output=args.output,
                 project_paths=project_paths,
-                no_extracts=args.no_extracts
+                no_extracts=not args.no_extracts
                 )
             download_workbooks(ctx, workbooks)
 
