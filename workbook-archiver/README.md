@@ -32,6 +32,8 @@ pip install tableauserverclient
 
 ## 🛠 Usage
 
+> **Tableau Cloud Users**: You must specify `<--initial-site>` as listing all sites is not supported in Tableau Cloud. Only the specified site will be exported.
+
 ```bash
 python workbook_archiver.py <server> <pat_name> <pat_secret> <output_directory> [--initial-site <site_uri>]
 
@@ -43,7 +45,7 @@ python workbook_archiver.py <server> <pat_name> <pat_secret> <output_directory> 
 - `<pat_name>`: The name of your Personal Access Token
 - `<pat_secret>`: The secret associated with the PAT
 - `<output_directory>`: Local path where workbooks will be saved (e.g., `C:\Users\you\Downloads\Backup`)
-- `<--initial-site>`: (Optional) Site URI to use for the initial sign-in (useful if you do not have access to the default site)
+- `<--initial-site>`: (Optional) Site URI to use for the initial sign-in (useful if you do not have access to the default site). Required for Tableau Cloud.
 
 ### Example
 

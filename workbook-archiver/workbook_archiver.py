@@ -110,7 +110,7 @@ def download_workbooks(server, tableau_auth,
         # Construct full filepath (without extension as that is handled by TSC)
         filepath = os.path.normcase(os.path.join(project_dir, workbook_name))
 
-        # Download the workbook 
+        # Download the workbook
         with server.auth.sign_in(tableau_auth):
             server.workbooks.download(workbook_id,filepath=filepath)
 
@@ -137,11 +137,13 @@ def main():
 
     args = parser.parse_args()
 
-    # Site URI for default sign-in (empty string means default site)
-    if args.initial_site:
-        default_site_uri = args.initial_site
-    else:
-        default_site_uri = ''
+    is_cloud = ".online.tableau.com" in args.server.lower()
+
+    if is_cloud and not args.initial_site:
+        parser.error("The --initial-site arguement is required when using Tableau Cloud.")
+
+    # Determine which site to use for initial login, uses Default site if not provided
+    default_site_uri = args.initial_site if args.initial_site else ''
 
     # Create server instance and authenticate to get list of sites
     server = TSC.Server(args.server, use_server_version=True)
@@ -150,31 +152,46 @@ def main():
                             args.pat_secret,
                             site_id=default_site_uri)
 
-    # Get all accessible sites
-    all_sites = query_sites(server,initial_auth)
+    if is_cloud:
+        # Only operate on the single specified site
+        cloud_site_uri = args.initial_site
 
-    # for each site
-    for site in all_sites:
-        # get the site name
-        site_name = site['name']
-
-        # Sanitize site name
+        # Sanitize site name from URI
         for c in ILLEGAL_CHARS:
-            site_name = site_name.replace(c,"_")
+            site_name = cloud_site_uri.replace(c,"_")
 
         # Ensure site folder exists
         os.makedirs(os.path.join(args.output, site_name), exist_ok=True)
 
-        # Authenticate for this specific site
-        site_auth  = TSC.PersonalAccessTokenAuth(
-                    args.pat_name,
-                    args.pat_secret,
-                    site_id=site['site_uri']
-                    )
+        # Use existing auth to 
+        workbooks = query_workbook_ids(server, initial_auth)
+        download_workbooks(server, initial_auth, workbooks, site_name, args.output)
+    else:
+        # Get all accessible sites
+        all_sites = query_sites(server,initial_auth)
 
-        # Retrieve and download all workbooks for the site
-        workbooks = query_workbook_ids(server,site_auth)
-        download_workbooks(server,site_auth,workbooks,site_name, args.output)
+        # for each site
+        for site in all_sites:
+            # get the site name
+            site_name = site['name']
+
+            # Sanitize site name
+            for c in ILLEGAL_CHARS:
+                site_name = site_name.replace(c,"_")
+
+            # Ensure site folder exists
+            os.makedirs(os.path.join(args.output, site_name), exist_ok=True)
+
+            # Authenticate for this specific site
+            site_auth  = TSC.PersonalAccessTokenAuth(
+                        args.pat_name,
+                        args.pat_secret,
+                        site_id=site['site_uri']
+                        )
+
+            # Retrieve and download all workbooks for the site
+            workbooks = query_workbook_ids(server,site_auth)
+            download_workbooks(server,site_auth,workbooks,site_name, args.output)
 
 if __name__ == "__main__":
     main()
