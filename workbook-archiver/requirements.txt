@@ -1,1 +1,1 @@
-tableauserverclient>=0.17.0
+tableauserverclient>=0.38.0
