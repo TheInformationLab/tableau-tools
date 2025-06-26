@@ -130,13 +130,13 @@ def main():
     parser.add_argument("pat_name", help="Personal Access Token name")
     parser.add_argument("pat_secret", help="Personal Access Token secret")
     parser.add_argument("output",
-                        help="Output directory path e.g. C:\\Users\\Name\\Downloads\\Archive"
+                        help="Output directory path e.g. \"C:\\Users\\Name\\Downloads\\Archive\""
                         )
     parser.add_argument("--initial-site",
                         help="If provided, uri of the site to use during site querying")
 
     args = parser.parse_args()
-    
+
     # check if the server address provided includes a trailing slash
     if not args.server.endswith("/"):
         args.server += "/"
