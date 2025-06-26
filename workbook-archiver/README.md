@@ -32,7 +32,7 @@ pip install tableauserverclient
 
 ## 🛠 Usage
 
-> **Tableau Cloud Users**: You must specify `<--initial-site>` as listing all sites is not supported in Tableau Cloud. Only the specified site will be exported.
+> **Tableau Cloud Users**: You must specify `--initial-site` as listing all sites is not supported in Tableau Cloud. Only the specified site will be exported.
 
 ```bash
 python workbook_archiver.py <server> <pat_name> <pat_secret> <output_directory> [--initial-site <site_uri>]
