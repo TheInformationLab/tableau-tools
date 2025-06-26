@@ -14,6 +14,7 @@ This script is useful for archiving or migrating workbooks from one environment 
 - Requires a site URI for Tableau Cloud
 - Reconstructs **nested project folder hierarchy** for clean archiving
 - Downloads all workbooks from each site
+- Can download workbooks with or without extracts
 - Sanitizes names to ensure safe filenames
 - Compatible with both Tableau Server and Tableau Cloud
 
@@ -38,7 +39,7 @@ pip install tableauserverclient
 
 
 ```bash
-python workbook_archiver.py <server> <pat_name> <pat_secret> <output_directory> [--initial-site <site_uri>]
+python workbook_archiver.py <server> <pat_name> <pat_secret> <output_directory> [--initial-site <site_uri> --no-extracts]
 
 ```
 
@@ -49,6 +50,7 @@ python workbook_archiver.py <server> <pat_name> <pat_secret> <output_directory> 
 - `<pat_secret>`: The secret associated with the PAT
 - `<output_directory>`: Local path where workbooks will be saved (e.g., `C:\Users\you\Downloads\Backup`)
 - `<--initial-site>`: *(Required for Tableau Cloud. Optional for Tableau Server)* Site URI to use for the initial sign-in (useful if you do not have access to the default site).
+- `<--no-extracts>`: *(Optional)* Add this flag to download workbooks without extracts.
 
 ### Example
 
@@ -59,6 +61,12 @@ python workbook_archiver.py https://tableau.example.com/ my-token-name my-secret
 
 ```bash
 python workbook_archiver.py https://10az.online.tableau.com/ token-name token-secret "C:\Archive" --initial-site marketing
+
+```
+### Example with --no_extracts
+
+```bash
+python workbook_archiver.py https://10az.online.tableau.com/ token-name token-secret "C:\Archive" --initial-site marketing --no-extracts
 
 ```
 

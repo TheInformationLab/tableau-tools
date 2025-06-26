@@ -112,7 +112,8 @@ def download_workbooks(server, tableau_auth,
                        workbook_info:str,
                        site_name:str,
                        output:str,
-                       project_paths:str):
+                       project_paths:str,
+                       no_extracts:bool):
     """
     Download all workbooks in the provided list to the output directory.
 
@@ -147,7 +148,7 @@ def download_workbooks(server, tableau_auth,
 
         # Download the workbook
         with server.auth.sign_in(tableau_auth):
-            server.workbooks.download(workbook_id,filepath=filepath)
+            server.workbooks.download(workbook_id,filepath=filepath,no_extract=no_extracts)
 
 ### ~~~ MAIN ENTRY POINT ~~~ ###
 
@@ -169,8 +170,14 @@ def main():
                         )
     parser.add_argument("--initial-site",
                         help="If provided, uri of the site to use during site querying")
+    parser.add_argument("--no-extracts",
+                        action="store_true",
+                        help="If set, workbooks will be downloaded without embedded extracts")
 
     args = parser.parse_args()
+
+    # check if extracts should be downloaded
+    no_extracts = bool(args.no_extracts)
 
     # check if the server address provided includes a trailing slash
     if not args.server.endswith("/"):
@@ -205,7 +212,7 @@ def main():
         # Use existing auth to 
         workbooks = query_workbook_ids(server, initial_auth)
         project_paths = build_project_hierarchy(server,initial_auth)
-        download_workbooks(server, initial_auth, workbooks, site_name, args.output, project_paths)
+        download_workbooks(server, initial_auth, workbooks, site_name, args.output, project_paths,no_extracts)
     else:
         # Get all accessible sites
         all_sites = query_sites(server,initial_auth)
@@ -232,7 +239,7 @@ def main():
             # Retrieve and download all workbooks for the site
             workbooks = query_workbook_ids(server,site_auth)
             project_paths = build_project_hierarchy(server,site_auth)
-            download_workbooks(server,site_auth,workbooks,site_name, args.output,project_paths)
+            download_workbooks(server,site_auth,workbooks,site_name, args.output,project_paths,no_extracts)
 
 if __name__ == "__main__":
     main()
