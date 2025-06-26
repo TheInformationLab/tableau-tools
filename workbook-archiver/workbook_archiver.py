@@ -176,9 +176,6 @@ def main():
 
     args = parser.parse_args()
 
-    # check if extracts should be downloaded
-    no_extracts = bool(args.no_extracts)
-
     # check if the server address provided includes a trailing slash
     if not args.server.endswith("/"):
         args.server += "/"
@@ -209,10 +206,18 @@ def main():
         # Ensure site folder exists
         os.makedirs(os.path.join(args.output, site_name), exist_ok=True)
 
-        # Use existing auth to 
+        # Use existing auth to download
         workbooks = query_workbook_ids(server, initial_auth)
         project_paths = build_project_hierarchy(server,initial_auth)
-        download_workbooks(server, initial_auth, workbooks, site_name, args.output, project_paths,no_extracts)
+        download_workbooks(
+            server,
+            initial_auth,
+            workbooks,
+            site_name,
+            args.output,
+            project_paths,
+            args.no_extracts
+            )
     else:
         # Get all accessible sites
         all_sites = query_sites(server,initial_auth)
@@ -239,7 +244,15 @@ def main():
             # Retrieve and download all workbooks for the site
             workbooks = query_workbook_ids(server,site_auth)
             project_paths = build_project_hierarchy(server,site_auth)
-            download_workbooks(server,site_auth,workbooks,site_name, args.output,project_paths,no_extracts)
+            download_workbooks(
+                server,
+                site_auth,
+                workbooks,
+                site_name,
+                args.output,
+                project_paths,
+                args.no_extracts
+                )
 
 if __name__ == "__main__":
     main()
