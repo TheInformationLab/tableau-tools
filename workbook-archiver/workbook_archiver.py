@@ -45,6 +45,39 @@ def query_sites(server,tableau_auth):
         # output the full list of site info
         return site_list
 
+def build_project_hierarchy(server, tableau_auth):
+    """
+    Builds a lookup of project_id -> full folder path by traversing parent_id hierarchy.
+
+    Args:
+        server (TSC.Server): Tableau server instance.
+        tableau_auth (TSC.PersonalAccessTokenAuth): Auth object.
+
+    Returns:
+        dict: project_id -> full_path (e.g., "Department/Finance/Quarterly Reports")
+    """
+    project_lookup = {}
+
+    with server.auth.sign_in(tableau_auth):
+        all_projects = list(TSC.Pager(server.projects))
+        id_to_project = {proj.id: proj for proj in all_projects}
+
+        def get_full_path(project_id):
+            path = []
+            current = id_to_project.get(project_id)
+            while current:
+                name = current.name or "Unnamed"
+                for c in ILLEGAL_CHARS:
+                    name = name.replace(c, "_")
+                path.insert(0, name)
+                current = id_to_project.get(current.parent_id)
+            return os.path.join(*path)
+
+        for project_id in id_to_project:
+            project_lookup[project_id] = get_full_path(project_id)
+
+    return project_lookup
+
 # function to get all workbooks for the site
 def query_workbook_ids(server, tableau_auth):
     """
@@ -78,7 +111,8 @@ def query_workbook_ids(server, tableau_auth):
 def download_workbooks(server, tableau_auth,
                        workbook_info:str,
                        site_name:str,
-                       output:str):
+                       output:str,
+                       project_paths:str):
     """
     Download all workbooks in the provided list to the output directory.
 
@@ -104,7 +138,8 @@ def download_workbooks(server, tableau_auth,
             site_name = site_name.replace(c, "_")
 
         # Create project-specific output directory
-        project_dir = os.path.join(output,site_name,f"{project_id}~{project_name}")
+        project_path = project_paths.get(project_id, f"unknown_project_{project_id}")
+        project_dir = os.path.join(output,site_name,project_path)
         os.makedirs(project_dir, exist_ok=True)
 
         # Construct full filepath (without extension as that is handled by TSC)
@@ -169,7 +204,8 @@ def main():
 
         # Use existing auth to 
         workbooks = query_workbook_ids(server, initial_auth)
-        download_workbooks(server, initial_auth, workbooks, site_name, args.output)
+        project_paths = build_project_hierarchy(server,initial_auth)
+        download_workbooks(server, initial_auth, workbooks, site_name, args.output, project_paths)
     else:
         # Get all accessible sites
         all_sites = query_sites(server,initial_auth)
@@ -195,7 +231,8 @@ def main():
 
             # Retrieve and download all workbooks for the site
             workbooks = query_workbook_ids(server,site_auth)
-            download_workbooks(server,site_auth,workbooks,site_name, args.output)
+            project_paths = build_project_hierarchy(server,site_auth)
+            download_workbooks(server,site_auth,workbooks,site_name, args.output,project_paths)
 
 if __name__ == "__main__":
     main()

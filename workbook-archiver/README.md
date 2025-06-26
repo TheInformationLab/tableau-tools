@@ -2,16 +2,18 @@
 
 A command-line tool to export all Tableau workbooks from a Tableau Server or Tableau Cloud site using the [Tableau Server Client (TSC) library](https://github.com/tableau/server-client-python).
 
-This script is useful for archiving or migrating workbooks from one environment to another. It supports Personal Access Token (PAT) authentication and automatically downloads workbooks across all accessible sites.
+This script is useful for archiving or migrating workbooks from one environment to another. It supports Personal Access Token (PAT) authentication and automatically downloads workbooks across all accessible sites (for Server) or a specified site (for Cloud).
 
 ---
 
 ## 🚀 Features
 
 - Authenticates using Tableau Personal Access Tokens (PAT)
-- Queries all accessible sites on a Tableau Server
+- Detects Tableau Server vs. Tableau Cloud
+- Queries all accessible sites (for Tableau Server only)
+- Requires a site URI for Tableau Cloud
+- Reconstructs **nested project folder hierarchy** for clean archiving
 - Downloads all workbooks from each site
-- Organizes downloaded workbooks by site and project
 - Sanitizes names to ensure safe filenames
 - Compatible with both Tableau Server and Tableau Cloud
 
@@ -34,6 +36,7 @@ pip install tableauserverclient
 
 > **Tableau Cloud Users**: You must specify `--initial-site` as listing all sites is not supported in Tableau Cloud. Only the specified site will be exported.
 
+
 ```bash
 python workbook_archiver.py <server> <pat_name> <pat_secret> <output_directory> [--initial-site <site_uri>]
 
@@ -45,7 +48,7 @@ python workbook_archiver.py <server> <pat_name> <pat_secret> <output_directory> 
 - `<pat_name>`: The name of your Personal Access Token
 - `<pat_secret>`: The secret associated with the PAT
 - `<output_directory>`: Local path where workbooks will be saved (e.g., `C:\Users\you\Downloads\Backup`)
-- `<--initial-site>`: (Optional) Site URI to use for the initial sign-in (useful if you do not have access to the default site). Required for Tableau Cloud.
+- `<--initial-site>`: *(Required for Tableau Cloud. Optional for Tableau Server)* Site URI to use for the initial sign-in (useful if you do not have access to the default site).
 
 ### Example
 
@@ -55,7 +58,7 @@ python workbook_archiver.py https://tableau.example.com/ my-token-name my-secret
 ### Example with --initial-site
 
 ```bash
-python workbook_archiver.py https://10ax.online.tableau.com/ token-name token-secret "C:\Archive" --initial-site marketing
+python workbook_archiver.py https://10az.online.tableau.com/ token-name token-secret "C:\Archive" --initial-site marketing
 
 ```
 
@@ -63,23 +66,34 @@ python workbook_archiver.py https://10ax.online.tableau.com/ token-name token-se
 
 ## 🗂 Output Structure
 
-The output directory will be structured as follows:
+The output directory will be structured by site, and then by the **full nested path** of the project:
 
 ```
 <output_directory>/
 ├── SiteOne/
-│   ├── projectID1~ProjectName/
-│   │   ├── Workbook A.twbx
-│   │   └── Workbook B.twbx
-|   ├── projectID2~ProjectName/
-│   │   ├── Workbook C.twbx
-│   │   └── Workbook D.twbx
+│   └── Department/
+│       └── Finance/
+│            └── Quarterly Reports/
+│               ├── Workbook A.twbx
+│               └── Workbook B.twbx
 ├── SiteTwo/
-│   └── projectID3~ProjectName/
-│       └── Workbook E.twbx
+│   └── Department/
+│       └── Finance/
+│            └── Quarterly Reports/
+│               ├── Workbook A.twbx
+│               └── Workbook B.twbx
 ```
 
-> Note: Project names are sanitized and prefixed with their project ID to avoid duplicates.
+> Note: Project and workbook names are sanitized to remove illegal filesystem characters.
+
+---
+
+## ☁️ Tableau Cloud Notice
+
+If using **Tableau Cloud** (`*.online.tableau.com`), the script:
+- Skips querying all sites (which is not permitted by the API)
+- Requires `--initial-site` to be explicitly provided
+- Exports only from the specified site
 
 ---
 
@@ -94,8 +108,8 @@ This tool uses **Personal Access Tokens** (PAT) for authentication. You can gene
 
 ## ⚠️ Limitations
 
-- Nested projects are not supported. Projects are uniquely identified using their ID and flattened into a single-level folder structure.
-- Does not currently support workbook versioning or filtering by ownership/date.
+- Workbooks are downloaded in their current published state.
+- Does not support filtering workbooks by tags, dates, or owner.
 
 ---
 
