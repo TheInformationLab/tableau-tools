@@ -6,17 +6,36 @@ This script:
 - Queries all workbooks in each site.
 - Downloads the workbooks to a structured folder hierarchy by site and project.
 
-Note:
-- Nested projects are not handled; projects are uniquely identified by their ID.
-
 """
 
 import argparse
 import os
+from dataclasses import dataclass
 import tableauserverclient as TSC
 
+### ~~ CONSTANTS ~~ ###
 # Characters not allowed in filenames (will be replaced with underscores)
 ILLEGAL_CHARS = ["/","\\",":","|","*","?","<",">",'"']
+
+@dataclass
+class WorkbookContext:
+    """
+    A container for workbook export configuration and context.
+
+    Attributes:
+        server (TSC.Server): An authenticated Tableau Server instance.
+        tableau_auth (TSC.PersonalAccessTokenAuth): Authentication credentials for the site.
+        site_name (str): The sanitized name of the Tableau site (used in folder structure).
+        output (str): The root path where workbooks will be saved locally.
+        project_paths (dict): A mapping of project_id to its full nested folder path.
+        no_extracts (bool): Whether to include embedded extracts when downloading workbooks.
+    """
+    server: TSC.Server
+    tableau_auth: TSC.PersonalAccessTokenAuth
+    site_name: str
+    output: str
+    project_paths: dict
+    no_extracts: bool
 
 ### ~~ FUNCTIONS ~~ ###
 
@@ -108,12 +127,10 @@ def query_workbook_ids(server, tableau_auth):
     return workbook_list
 
 # function to download workbooks
-def download_workbooks(server, tableau_auth,
-                       workbook_info:str,
-                       site_name:str,
-                       output:str,
-                       project_paths:str,
-                       no_extracts:bool):
+def download_workbooks(ctx: WorkbookContext,
+                       workbook_info:list[dict],
+                       ):
+
     """
     Download all workbooks in the provided list to the output directory.
 
@@ -136,19 +153,19 @@ def download_workbooks(server, tableau_auth,
         for c in ILLEGAL_CHARS:
             project_name = project_name.replace(c,"_")
             workbook_name = workbook_name.replace(c,"_")
-            site_name = site_name.replace(c, "_")
+            site_name = ctx.site_name.replace(c, "_")
 
         # Create project-specific output directory
-        project_path = project_paths.get(project_id, f"unknown_project_{project_id}")
-        project_dir = os.path.join(output,site_name,project_path)
+        project_path = ctx.project_paths.get(project_id, f"unknown_project_{project_id}")
+        project_dir = os.path.join(ctx.output,site_name,project_path)
         os.makedirs(project_dir, exist_ok=True)
 
         # Construct full filepath (without extension as that is handled by TSC)
         filepath = os.path.normcase(os.path.join(project_dir, workbook_name))
 
         # Download the workbook
-        with server.auth.sign_in(tableau_auth):
-            server.workbooks.download(workbook_id,filepath=filepath,no_extract=no_extracts)
+        with ctx.server.auth.sign_in(ctx.tableau_auth):
+            ctx.server.workbooks.download(workbook_id,filepath=filepath,no_extract=ctx.no_extracts)
 
 ### ~~~ MAIN ENTRY POINT ~~~ ###
 
@@ -209,15 +226,15 @@ def main():
         # Use existing auth to download
         workbooks = query_workbook_ids(server, initial_auth)
         project_paths = build_project_hierarchy(server,initial_auth)
-        download_workbooks(
-            server,
-            initial_auth,
-            workbooks,
-            site_name,
-            args.output,
-            project_paths,
-            args.no_extracts
-            )
+        ctx = WorkbookContext(
+            server=server,
+            tableau_auth=initial_auth,
+            site_name=site_name,
+            output=args.output,
+            project_paths=project_paths,
+            no_extracts=args.no_extracts
+        )
+        download_workbooks(ctx, workbooks)
     else:
         # Get all accessible sites
         all_sites = query_sites(server,initial_auth)
@@ -244,15 +261,15 @@ def main():
             # Retrieve and download all workbooks for the site
             workbooks = query_workbook_ids(server,site_auth)
             project_paths = build_project_hierarchy(server,site_auth)
-            download_workbooks(
-                server,
-                site_auth,
-                workbooks,
-                site_name,
-                args.output,
-                project_paths,
-                args.no_extracts
+            ctx = WorkbookContext(
+                server=server,
+                tableau_auth=site_auth,
+                site_name=site_name,
+                output=args.output,
+                project_paths=project_paths,
+                no_extracts=args.no_extracts
                 )
+            download_workbooks(ctx, workbooks)
 
 if __name__ == "__main__":
     main()
