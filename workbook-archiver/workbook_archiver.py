@@ -153,11 +153,11 @@ def download_workbooks(ctx: WorkbookContext,
         for c in ILLEGAL_CHARS:
             project_name = project_name.replace(c,"_")
             workbook_name = workbook_name.replace(c,"_")
-            site_name = site_name.replace(c, "_")
+            site_name = ctx.site_name.replace(c, "_")
 
         # Create project-specific output directory
         project_path = ctx.project_paths.get(project_id, f"unknown_project_{project_id}")
-        project_dir = os.path.join(ctx.output,ctx.site_name,project_path)
+        project_dir = os.path.join(ctx.output,site_name,project_path)
         os.makedirs(project_dir, exist_ok=True)
 
         # Construct full filepath (without extension as that is handled by TSC)
