@@ -165,7 +165,11 @@ def download_workbooks(ctx: WorkbookContext,
 
         # Download the workbook
         with ctx.server.auth.sign_in(ctx.tableau_auth):
-            ctx.server.workbooks.download(workbook_id,filepath=filepath,include_extract=ctx.no_extracts)
+            ctx.server.workbooks.download(
+                workbook_id,
+                filepath=filepath,
+                include_extract=ctx.no_extracts
+                )
 
 ### ~~~ MAIN ENTRY POINT ~~~ ###
 
@@ -192,6 +196,10 @@ def main():
                         help="If set, workbooks will be downloaded without embedded extracts")
 
     args = parser.parse_args()
+
+    # check if provided output path exists
+    if not os.path.exists(args.output):
+        parser.error("Provided output path does not exist.")
 
     # check if the server address provided includes a trailing slash
     if not args.server.endswith("/"):
