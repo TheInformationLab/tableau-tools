@@ -88,7 +88,7 @@ The output directory will be structured by site, and then by the **full nested p
 
 ---
 
-## 🔐 Tableau Cloud Notice
+## ☁️ Tableau Cloud Notice
 
 If using **Tableau Cloud** (`*.online.tableau.com`), the script:
 - Skips querying all sites (which is not permitted by the API)
