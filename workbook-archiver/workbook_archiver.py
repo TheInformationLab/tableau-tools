@@ -144,7 +144,7 @@ def main():
     is_cloud = ".online.tableau.com" in args.server.lower()
 
     if is_cloud and not args.initial_site:
-        parser.error("The --initial-site arguement is required when using Tableau Cloud.")
+        parser.error("The --initial-site argument is required when using Tableau Cloud.")
 
     # Determine which site to use for initial login, uses Default site if not provided
     default_site_uri = args.initial_site if args.initial_site else ''
