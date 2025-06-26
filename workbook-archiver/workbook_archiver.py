@@ -185,9 +185,9 @@ def main():
     parser.add_argument("output",
                         help="Output directory path e.g. \"C:\\Users\\Name\\Downloads\\Archive\""
                         )
-    parser.add_argument("--initial-site",
+    parser.add_argument("-s", "--initial-site",
                         help="If provided, uri of the site to use during site querying")
-    parser.add_argument("--no-extracts",
+    parser.add_argument("-x", "--no-extracts",
                         action="store_true",
                         help="If set, workbooks will be downloaded without embedded extracts")
 

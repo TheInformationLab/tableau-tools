@@ -49,8 +49,8 @@ python workbook_archiver.py <server> <pat_name> <pat_secret> <output_directory> 
 - `<pat_name>`: The name of your Personal Access Token
 - `<pat_secret>`: The secret associated with the PAT
 - `<output_directory>`: Local path where workbooks will be saved (e.g., `C:\Users\you\Downloads\Backup`)
-- `<--initial-site>`: *(Required for Tableau Cloud. Optional for Tableau Server)* Site URI to use for the initial sign-in (useful if you do not have access to the default site).
-- `<--no-extracts>`: *(Optional)* Add this flag to download workbooks without extracts.
+- `-s`, `--initial-site`: *(Required for Tableau Cloud. Optional for Tableau Server)* Site URI to use for the initial sign-in (useful if you do not have access to the default site).
+- `-x`, `--no-extracts`: *(Optional)* Add this flag to download workbooks without extracts.
 
 ### Example
 
@@ -66,7 +66,12 @@ python workbook_archiver.py https://10az.online.tableau.com/ token-name token-se
 ### Example with --no_extracts
 
 ```bash
-python workbook_archiver.py https://10az.online.tableau.com/ token-name token-secret "C:\Archive" --initial-site marketing --no-extracts
+python workbook_archiver.py https://10az.online.tableau.com/ token-name token-secret "C:\Archive" -s marketing --no-extracts
+
+```
+
+```bash
+python workbook_archiver.py https://10az.online.tableau.com/ token-name token-secret "C:\Archive" -s marketing -x
 
 ```
 
