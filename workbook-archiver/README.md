@@ -15,7 +15,7 @@ This script is useful for archiving or migrating workbooks from one environment 
 - Reconstructs **nested project folder hierarchy** for clean archiving
 - Downloads all workbooks from each site
 - Can download workbooks with or without extracts
-- Sanitizes names to ensure safe filenames
+- Sanitises names to ensure safe filenames
 - Compatible with both Tableau Server and Tableau Cloud
 
 ---
@@ -97,7 +97,7 @@ The output directory will be structured by site, and then by the **full nested p
 │               └── Workbook B.twbx
 ```
 
-> Note: Project and workbook names are sanitized to remove illegal filesystem characters.
+> Note: Project and workbook names are sanitised to remove illegal filesystem characters.
 
 ---
 
