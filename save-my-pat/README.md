@@ -1,4 +1,4 @@
-# Refresh expiration on Personal Access Tokens
+# Refresh expiration of Personal Access Tokens
 
 A command-line tool to refresh Personal Access Token validity on a Tableau Server or Tableau Cloud site.
 
