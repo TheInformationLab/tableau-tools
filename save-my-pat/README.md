@@ -12,8 +12,8 @@ Additionally, for Tableau Cloud the script will check if the token is due to exp
 
 - Authenticates using Tableau Personal Access Tokens (PAT)
 - Detects Tableau Server vs. Tableau Cloud
-- Checks token validity on Tableau Cloud. This is not supported by the Tableau Server REST API.
-- Requires a site URI for authentication
+- Checks token expiration date for Tableau Cloud. This is not supported by the Tableau Server REST API
+- Requires a Site URI for authentication
 - Compatible with both Tableau Server and Tableau Cloud
 
 ---
@@ -33,11 +33,8 @@ pip install requests
 
 ## 🛠 Usage
 
-> **Tableau Cloud Users**: You must specify `--initial-site` as listing all sites is not supported in Tableau Cloud. Only the specified site will be exported.
-
-
 ```bash
-python pat_checker.py <server> <site_uri> <token_name> <token_secret> <age_threshold>
+python pat_checker.py <server> <site_uri> <token_name> <token_secret> [--age_threshold <days>]
 
 ```
 
@@ -47,12 +44,16 @@ python pat_checker.py <server> <site_uri> <token_name> <token_secret> <age_thres
 - `<site_uri>`: URI of the site to sign into, as it appears in the address bar
 - `<token_name>`: The name of your Personal Access Token
 - `<token_secret>`: The secret associated with the PAT
-- `<age_threshold>`: Time in days before expiry to start triggering warnings
+- `-t`, `--age_threshold`: *(Optional)* Time in days before expiry to start triggering warnings, default is 30
 
 ### Example
 
 ```bash
-python pat_checker.py https://tableau.example.com/ my-site my-token-name my-secret-value 30
+python pat_checker.py https://tableau.example.com/ my-site my-token-name my-secret-value --age_threshold 60
+```
+
+```bash
+python pat_checker.py https://tableau.example.com/ my-site my-token-name my-secret-value -t 14
 ```
 
 ---

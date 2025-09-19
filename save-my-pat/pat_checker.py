@@ -26,8 +26,7 @@ def parse_arguments():
     parser.add_argument("site_uri", help="URI for the site, as seen in the address bar")
     parser.add_argument("token_name", help="Personal access token name")
     parser.add_argument("token_secret", help="Personal access token secret")
-    parser.add_argument(
-        "age_threshold",
+    parser.add_argument("-t", "--age_threshold",
         help="Number of days until expiry to start raising warnings")
 
     args = parser.parse_args()
@@ -194,11 +193,14 @@ def main():
 
     server = args.server
     if not server.endswith("/"):
-        server = server+"/"
+        server += "/"
     site_uri = args.site_uri
     token_name = args.token_name
     token_secret = args.token_secret
-    age_threshold = int(args.age_threshold)
+    if not args.age_threshold:
+        age_threshold = 30
+    else:
+        age_threshold = int(args.age_threshold)
     api_version = get_api_version(server)
 
     logging.info("Signing into server %s using supplied PAT.", server)
