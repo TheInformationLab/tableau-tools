@@ -226,10 +226,8 @@ def main():
                 ),
             token_name)
 
-        # get current time
-        now = datetime.now()
         # get difference between expiry and now in days
-        diff = (expiry - now).days
+        diff = (expiry - datetime.now()).days
 
         if diff < age_threshold:
             # Raise a warning about upcoming expiry
